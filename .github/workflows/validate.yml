@@ -2,7 +2,7 @@ name: Validar CALISTHENICS PRO
 
 on:
   push:
-    branches: [main]
+    branches: [main, calisthenics-pro-v2-rebuild]
   pull_request:
     branches: [main]
   workflow_dispatch:
