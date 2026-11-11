@@ -89,6 +89,22 @@ const exerciseTips: Record<string, string> = {
  "Fondos":"Usa paralelas firmes. Mantén hombros estables y rango cómodo; no bajes más allá de lo que controlas.",
  "Pistol squat asistida":"Sujétate a un apoyo estable, flexiona una pierna y baja hasta donde mantengas equilibrio y control.",
 };
+const exerciseDetails: Record<string, {muscles:string; equipment:string}> = {
+ "Flexiones inclinadas":{muscles:"Pecho, tríceps y hombros",equipment:"Pared, mesa o banco muy estable"},
+ "Remo con apoyo":{muscles:"Espalda, bíceps y parte posterior de hombros",equipment:"Barra baja o apoyo firme y seguro"},
+ "Sentadillas":{muscles:"Cuádriceps, glúteos y core",equipment:"Ninguno"},
+ "Puente de glúteos":{muscles:"Glúteos e isquiotibiales",equipment:"Colchoneta o superficie cómoda"},
+ "Plancha":{muscles:"Abdominales, core y hombros",equipment:"Colchoneta opcional"},
+ "Movilidad de hombros":{muscles:"Manguito rotador y músculos estabilizadores",equipment:"Ninguno o banda ligera"},
+ "Flexiones":{muscles:"Pecho, tríceps, hombros y core",equipment:"Ninguno"},
+ "Dominadas asistidas":{muscles:"Espalda, bíceps y antebrazos",equipment:"Barra fija y banda o asistencia segura"},
+ "Fondos asistidos":{muscles:"Tríceps, pecho y hombros",equipment:"Paralelas firmes y asistencia segura"},
+ "Hollow body hold":{muscles:"Abdominales y core",equipment:"Colchoneta opcional"},
+ "Flexiones declinadas":{muscles:"Pecho superior, hombros y tríceps",equipment:"Banco o apoyo bajo y estable"},
+ "Dominadas":{muscles:"Espalda, bíceps y antebrazos",equipment:"Barra fija y bien instalada"},
+ "Fondos":{muscles:"Tríceps, pecho y hombros",equipment:"Paralelas firmes"},
+ "Pistol squat asistida":{muscles:"Cuádriceps, glúteos y core",equipment:"Apoyo firme para mantener el equilibrio"},
+};
 export default function App() {
  const [tab,setTab]=useState<Tab>("home"); const [filter,setFilter]=useState("Todos"); const [query,setQuery]=useState(""); const [selected,setSelected]=useState<Skill|null>(null);
  const [done,setDone]=useState<string[]>(["L-sit"]); const [saved,setSaved]=useState<string[]>([]); const [completedSessions,setCompletedSessions]=useState(0); const [storageReady,setStorageReady]=useState(false); const [athleteName,setAthleteName]=useState("Atleta"); const [athleteGoal,setAthleteGoal]=useState("Dominar habilidades"); const [experience,setExperience]=useState("Principiante"); const [workoutDates,setWorkoutDates]=useState<string[]>([]); const [pushupRecord,setPushupRecord]=useState(0); const [recordInput,setRecordInput]=useState("");
@@ -156,7 +172,7 @@ export default function App() {
  {phase==="Completado"?<View style={styles.panel}><Text style={styles.sectionTitle}>¡Entrenamiento terminado!</Text><Text style={styles.description}>Buen trabajo. Recupera y vuelve cuando estés listo.</Text><TouchableOpacity style={styles.primary} onPress={()=>{setExerciseIndex(0);setSeries(1);setPhase("Listo");setSecondsLeft(workout[0].work);setTimerRunning(false)}}><Text style={styles.primaryText}>REPETIR ENTRENAMIENTO</Text></TouchableOpacity></View>:<><View style={styles.panel}>
  <Text style={styles.eyebrow}>EJERCICIO {exerciseIndex+1} DE {workout.length}</Text><Text style={styles.heroTitle}>{workout[exerciseIndex].name}</Text>
  <Text style={styles.cardSub}>{workout[exerciseIndex].kind==="time"?`${workout[exerciseIndex].work} segundos de aguante`:`${workout[exerciseIndex].reps} repeticiones`} · {workout[exerciseIndex].sets} series</Text>
- <View style={{backgroundColor:C.panel2,borderRadius:12,padding:14,marginTop:14}}><Text style={styles.cardTitle}>Cómo hacerlo correctamente</Text><Text style={[styles.cardSub,{color:C.soft,lineHeight:19,marginTop:7}]}>{exerciseTips[workout[exerciseIndex].name]||"Realiza el movimiento lentamente, con control y dentro de un rango cómodo."}</Text><Text style={[styles.noteText,{marginTop:9}]}>Prioriza la técnica. Detente si sientes dolor y utiliza una variante más fácil si no puedes mantener el control.</Text></View>
+ <View style={{backgroundColor:C.panel2,borderRadius:12,padding:14,marginTop:14}}><Text style={styles.cardTitle}>Cómo hacerlo correctamente</Text><Text style={[styles.cardSub,{color:C.soft,lineHeight:19,marginTop:7}]}>{exerciseTips[workout[exerciseIndex].name]||"Realiza el movimiento lentamente, con control y dentro de un rango cómodo."}</Text><Text style={[styles.noteText,{marginTop:9}]}>Prioriza la técnica. Detente si sientes dolor y utiliza una variante más fácil si no puedes mantener el control.</Text><View style={{height:1,backgroundColor:C.line,marginVertical:12}}/><Text style={styles.cardTitle}>Músculos principales</Text><Text style={[styles.cardSub,{color:C.soft,marginTop:5}]}>{exerciseDetails[workout[exerciseIndex].name]?.muscles||"Músculos estabilizadores y grupos implicados en el movimiento"}</Text><Text style={[styles.cardTitle,{marginTop:12}]}>Material necesario</Text><Text style={[styles.cardSub,{color:C.soft,marginTop:5}]}>{exerciseDetails[workout[exerciseIndex].name]?.equipment||"Depende de la variante; utiliza siempre equipo estable y seguro."}</Text></View>
  <View style={styles.timerCircle}><Text style={styles.timerPhase}>{phase==="Listo"?"PREPARADO":phase.toUpperCase()}</Text><Text style={styles.timerNumber}>{phase==="Trabajo"||phase==="Descanso"?String(secondsLeft).padStart(2,"0")+"s":workout[exerciseIndex].kind==="time"?workout[exerciseIndex].work+"s":workout[exerciseIndex].reps}</Text><Text style={styles.timerHint}>{phase==="Descanso"?"Tiempo de recuperación":workout[exerciseIndex].kind==="time"?"Aguanta con buena técnica":"Repeticiones objetivo"}</Text></View>
  <View style={styles.seriesRow}><Text style={styles.cardTitle}>Serie {series} / {workout[exerciseIndex].sets}</Text><Text style={styles.cardSub}>Descanso: {workout[exerciseIndex].rest} s</Text></View>
  <View style={styles.progressTrack}><View style={[styles.progressFill,{width:`${(series/workout[exerciseIndex].sets)*100}%`}]}/></View>
