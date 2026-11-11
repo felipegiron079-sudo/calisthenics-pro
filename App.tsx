@@ -106,6 +106,13 @@ export default function App() {
  useEffect(()=>{(async()=>{try{const raw=await AsyncStorage.getItem("calisthenics-pro-progress");if(raw){const data=JSON.parse(raw);if(Array.isArray(data.done))setDone(data.done);if(Array.isArray(data.saved))setSaved(data.saved);if(typeof data.completedSessions==="number")setCompletedSessions(data.completedSessions);if(typeof data.athleteName==="string")setAthleteName(data.athleteName);if(typeof data.athleteGoal==="string")setAthleteGoal(data.athleteGoal);if(typeof data.experience==="string")setExperience(data.experience);if(Array.isArray(data.workoutDates))setWorkoutDates(data.workoutDates);if(typeof data.pushupRecord==="number")setPushupRecord(data.pushupRecord);}}catch(e){console.warn("No se pudo cargar el progreso",e);}finally{setStorageReady(true);}})();},[]);
  useEffect(()=>{if(!storageReady)return;AsyncStorage.setItem("calisthenics-pro-progress",JSON.stringify({done,saved,completedSessions,athleteName,athleteGoal,experience,workoutDates,pushupRecord})).catch(e=>console.warn("No se pudo guardar el progreso",e));},[done,saved,completedSessions,athleteName,athleteGoal,experience,workoutDates,pushupRecord,storageReady]);
  useEffect(()=>{
+  setExerciseIndex(0);
+  setSeries(1);
+  setPhase("Listo");
+  setTimerRunning(false);
+  setSecondsLeft(workout[0].work);
+ },[experience]);
+ useEffect(()=>{
   if(!timerRunning) return;
   const id=setInterval(()=>{
    setSecondsLeft(current=>{
