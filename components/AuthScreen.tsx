@@ -14,6 +14,8 @@ export default function AuthScreen({ onClose }: Props) {
  const [message,setMessage]=useState("");
  const [recoveryMode,setRecoveryMode]=useState(false);
  const [newPassword,setNewPassword]=useState("");
+ const [confirmPassword,setConfirmPassword]=useState("");
+ const [confirmNewPassword,setConfirmNewPassword]=useState("");
  useEffect(()=>{
   if(!supabase) return;
   supabase.auth.getSession().then(({data})=>setSessionEmail(data.session?.user.email??null));
@@ -24,6 +26,7 @@ export default function AuthScreen({ onClose }: Props) {
   const cleanEmail=email.trim().toLowerCase();
   if(!cleanEmail||!cleanEmail.includes("@")){Alert.alert("Revisa tu correo","Escribe un correo electrónico válido.");return;}
   if(password.length<6){Alert.alert("Contraseña muy corta","Usa al menos 6 caracteres.");return;}
+  if(mode==="register"&&password!==confirmPassword){Alert.alert("Las contraseñas no coinciden","Escribe la misma contraseña en los dos campos.");return;}
   if(!supabase){Alert.alert("Conexión pendiente","La pantalla de cuentas ya está preparada, pero falta configurar las claves públicas de Supabase. Lo haremos al conectar la base de datos.");return;}
   setBusy(true);setMessage("");
   try{
@@ -55,9 +58,10 @@ export default function AuthScreen({ onClose }: Props) {
  };
  const updatePassword=async()=>{
   if(newPassword.length<6){Alert.alert("Contraseña muy corta","Usa al menos 6 caracteres.");return;}
+  if(newPassword!==confirmNewPassword){Alert.alert("Las contraseñas no coinciden","Confirma la nueva contraseña correctamente.");return;}
   if(!supabase)return;
   setBusy(true);
-  try{const {error}=await supabase.auth.updateUser({password:newPassword});if(error)throw error;setRecoveryMode(false);setNewPassword("");Alert.alert("Contraseña actualizada","Ya puedes entrar con tu nueva contraseña.");}
+  try{const {error}=await supabase.auth.updateUser({password:newPassword});if(error)throw error;setRecoveryMode(false);setNewPassword("");setConfirmNewPassword("");Alert.alert("Contraseña actualizada","Ya puedes entrar con tu nueva contraseña.");}
   catch(error){Alert.alert("No se pudo actualizar",error instanceof Error?error.message:"Solicita otro enlace e inténtalo de nuevo.");}
   finally{setBusy(false);}
  };
@@ -66,11 +70,12 @@ export default function AuthScreen({ onClose }: Props) {
   <TouchableOpacity onPress={onClose} style={s.back}><Ionicons name="arrow-back" size={20} color="#111"/><Text style={s.backText}>VOLVER AL PERFIL</Text></TouchableOpacity>
   <View style={s.logo}><Ionicons name="person-circle-outline" size={42} color="#111"/></View>
   <Text style={s.kicker}>CALISTHENICS PRO</Text><Text style={s.title}>{recoveryMode?"Nueva contraseña":sessionEmail?"Tu cuenta":mode==="login"?"Bienvenido de nuevo":"Crea tu cuenta"}</Text>
-  {recoveryMode?<><Text style={s.copy}>Escribe una contraseña nueva para tu cuenta.</Text><Text style={s.label}>NUEVA CONTRASEÑA</Text><TextInput value={newPassword} onChangeText={setNewPassword} secureTextEntry autoCapitalize="none" placeholder="Mínimo 6 caracteres" placeholderTextColor="#888" style={s.input}/><TouchableOpacity disabled={busy} style={s.primary} onPress={updatePassword}>{busy?<ActivityIndicator color="#fff"/>:<Text style={s.primaryText}>GUARDAR NUEVA CONTRASEÑA</Text>}</TouchableOpacity></>:sessionEmail?<><Text style={s.copy}>Sesión iniciada con</Text><Text style={s.email}>{sessionEmail}</Text><Text style={s.copy}>La sincronización de tu progreso en la nube se conectará en el siguiente paso.</Text><TouchableOpacity disabled={busy} style={s.primary} onPress={logout}>{busy?<ActivityIndicator color="#fff"/>:<Text style={s.primaryText}>CERRAR SESIÓN</Text>}</TouchableOpacity></>:<>
+  {recoveryMode?<><Text style={s.copy}>Escribe una contraseña nueva para tu cuenta.</Text><Text style={s.label}>NUEVA CONTRASEÑA</Text><TextInput value={newPassword} onChangeText={setNewPassword} secureTextEntry autoCapitalize="none" placeholder="Mínimo 6 caracteres" placeholderTextColor="#888" style={s.input}/><Text style={s.label}>CONFIRMAR NUEVA CONTRASEÑA</Text><TextInput value={confirmNewPassword} onChangeText={setConfirmNewPassword} secureTextEntry autoCapitalize="none" placeholder="Repite la contraseña" placeholderTextColor="#888" style={s.input}/><TouchableOpacity disabled={busy} style={s.primary} onPress={updatePassword}>{busy?<ActivityIndicator color="#fff"/>:<Text style={s.primaryText}>GUARDAR NUEVA CONTRASEÑA</Text>}</TouchableOpacity></>:sessionEmail?<><Text style={s.copy}>Sesión iniciada con</Text><Text style={s.email}>{sessionEmail}</Text><Text style={s.copy}>La sincronización de tu progreso en la nube se conectará en el siguiente paso.</Text><TouchableOpacity disabled={busy} style={s.primary} onPress={logout}>{busy?<ActivityIndicator color="#fff"/>:<Text style={s.primaryText}>CERRAR SESIÓN</Text>}</TouchableOpacity></>:<>
    <Text style={s.copy}>Guarda tu cuenta y prepara tu progreso para sincronizarlo entre dispositivos.</Text>
    <View style={s.switch}><TouchableOpacity onPress={()=>{setMode("login");setMessage("");}} style={[s.switchItem,mode==="login"&&s.active]}><Text style={[s.switchText,mode==="login"&&s.activeText]}>INICIAR SESIÓN</Text></TouchableOpacity><TouchableOpacity onPress={()=>{setMode("register");setMessage("");}} style={[s.switchItem,mode==="register"&&s.active]}><Text style={[s.switchText,mode==="register"&&s.activeText]}>REGISTRARSE</Text></TouchableOpacity></View>
    <Text style={s.label}>CORREO ELECTRÓNICO</Text><TextInput value={email} onChangeText={setEmail} autoCapitalize="none" keyboardType="email-address" autoComplete="email" placeholder="tu correo electrónico" placeholderTextColor="#888" style={s.input}/>
    <Text style={s.label}>CONTRASEÑA</Text><TextInput value={password} onChangeText={setPassword} secureTextEntry autoCapitalize="none" autoComplete={mode==="login"?"current-password":"new-password"} placeholder="Mínimo 6 caracteres" placeholderTextColor="#888" style={s.input}/>
+   {mode==="register"&&<><Text style={s.label}>CONFIRMAR CONTRASEÑA</Text><TextInput value={confirmPassword} onChangeText={setConfirmPassword} secureTextEntry autoCapitalize="none" autoComplete="new-password" placeholder="Repite la contraseña" placeholderTextColor="#888" style={s.input}/></>}
    <TouchableOpacity disabled={busy} onPress={submit} style={s.primary}>{busy?<ActivityIndicator color="#fff"/>:<Text style={s.primaryText}>{mode==="login"?"INICIAR SESIÓN":"CREAR CUENTA"}</Text>}</TouchableOpacity>
    {!!message&&<Text style={s.message}>{message}</Text>}
    {mode==="login"&&<TouchableOpacity disabled={busy} onPress={recoverPassword} style={{paddingVertical:16,alignItems:"center"}}><Text style={{fontSize:11,fontWeight:"800",color:"#333",textDecorationLine:"underline"}}>¿OLVIDASTE TU CONTRASEÑA?</Text></TouchableOpacity>}
