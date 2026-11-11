@@ -59,9 +59,8 @@ export default function App() {
   const id=setInterval(()=>{
    setSecondsLeft(current=>{
     if(current<=1){
-     setTimerRunning(false);
      if(phase==="Trabajo"){setPhase("Descanso");return workout[exerciseIndex].rest;}
-     setPhase("Listo");return 0;
+     setTimerRunning(false);setPhase("Listo");return 0;
     }
     return current-1;
    });
@@ -94,7 +93,7 @@ export default function App() {
  </View>
  <Text style={styles.noteText}>Haz las repeticiones con control y detente si sientes dolor. En esta primera versión el temporizador funciona para ejercicios por tiempo y el descanso; el conteo de repeticiones lo confirmas tú.</Text>
  </>}
- <Header eyebrow="Tu rutina" title="Ejercicios de hoy"/>{workout.map((x,i)=><View style={styles.workoutRow} key={x.name}><View style={styles.stepNum}><Text style={styles.stepNumText}>{i+1}</Text></View><View style={{flex:1}}><Text style={styles.cardTitle}>{x.name}</Text><Text style={styles.cardSub}>{x.sets} series · {x.kind==="time"?x.work+" segundos":x.reps+" repeticiones"} · {x.rest}s descanso</Text></View>{i===exerciseIndex&&<badge/>}</View>)}
+ <Header eyebrow="Tu rutina" title="Ejercicios de hoy"/>{workout.map((x,i)=><View style={styles.workoutRow} key={x.name}><View style={styles.stepNum}><Text style={styles.stepNumText}>{i+1}</Text></View><View style={{flex:1}}><Text style={styles.cardTitle}>{x.name}</Text><Text style={styles.cardSub}>{x.sets} series · {x.kind==="time"?x.work+" segundos":x.reps+" repeticiones"} · {x.rest}s descanso</Text></View>{i===exerciseIndex&&<Ionicons name="play-circle" size={20} color={C.white}/>}</View>)}
  <Text style={styles.noteText}>Los vídeos demostrativos se añadirán en la ficha de cada ejercicio cuando seleccionemos fuentes de vídeo adecuadas.</Text></>} {tab==="progress"&&<><Header eyebrow="Tu evolución" title="Cada repetición cuenta"/><View style={styles.panel}><Text style={styles.sectionTitle}>Habilidades practicadas</Text><Text style={styles.bigNumber}>{done.length}</Text><Text style={styles.cardSub}>Progresiones marcadas como dominadas</Text><View style={styles.progressTrack}><View style={[styles.progressFill,{width:`${Math.min(100,done.length/skills.length*100)}%`}]}/></View><Text style={styles.cardSub}>{Math.round(done.length/skills.length*100)}% del catálogo marcado</Text></View><Header eyebrow="Seguimiento" title="Tus progresiones"/>{skills.filter(s=>done.includes(s.name)||s.steps.some(x=>done.includes(x))).map(s=><SkillCard key={s.name} item={s}/>)}<Text style={styles.noteText}>Marca las progresiones dentro de cada truco para registrar tus avances. Los datos se guardan solo durante esta sesión en esta versión inicial.</Text></>}
  {tab==="profile"&&<><Header eyebrow="Atleta" title="Tu perfil"/><View style={styles.profileCircle}><Ionicons name="person" size={36} color={C.white}/></View><Text style={[styles.heroTitle,{textAlign:"center",fontSize:28}]}>ATLETA</Text><Text style={[styles.cardSub,{textAlign:"center",marginBottom:25}]}>Nivel inicial · CALISTHENICS PRO</Text>{[["Objetivo","Dominar habilidades"],["Experiencia","Por configurar"],["Unidades","Métrico"],["Tema","Negro · Blanco · Gris"],["Versión","Prototipo 1.0"]].map(([a,b])=><View style={styles.profileRow} key={a}><Text style={styles.cardSub}>{a}</Text><Text style={styles.cardTitle}>{b}</Text></View>)}</>}
  </ScrollView><View style={styles.tabbar}>{tabs.map(t=><TouchableOpacity key={t.id} onPress={()=>{setSelected(null);setTab(t.id)}} style={styles.tab}><Ionicons name={t.icon as any} size={21} color={tab===t.id?C.white:C.muted}/><Text style={[styles.tabLabel,tab===t.id&&{color:C.white}]}>{t.label}</Text></TouchableOpacity>)}</View></>}
