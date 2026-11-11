@@ -39,6 +39,18 @@ export default function AuthScreen({ onClose }: Props) {
   }catch(error){Alert.alert("No se pudo completar",error instanceof Error?error.message:"Inténtalo de nuevo.");}
   finally{setBusy(false);}
  };
+ const recoverPassword=async()=>{
+  const cleanEmail=email.trim().toLowerCase();
+  if(!cleanEmail||!cleanEmail.includes("@")){Alert.alert("Escribe tu correo","Necesitamos tu correo para enviarte el enlace de recuperación.");return;}
+  if(!supabase){Alert.alert("Conexión pendiente","La recuperación estará disponible cuando configuremos Supabase.");return;}
+  setBusy(true);
+  try{
+   const {error}=await supabase.auth.resetPasswordForEmail(cleanEmail);
+   if(error) throw error;
+   Alert.alert("Correo enviado","Si la cuenta existe, recibirás un mensaje con los pasos para recuperar tu contraseña. Revisa también spam.");
+  }catch(error){Alert.alert("No se pudo enviar",error instanceof Error?error.message:"Inténtalo de nuevo.");}
+  finally{setBusy(false);}
+ };
  const logout=async()=>{if(!supabase)return;setBusy(true);const {error}=await supabase.auth.signOut();setBusy(false);if(error)Alert.alert("Error",error.message);else setSessionEmail(null);};
  return <ScrollView contentContainerStyle={s.container} keyboardShouldPersistTaps="handled">
   <TouchableOpacity onPress={onClose} style={s.back}><Ionicons name="arrow-back" size={20} color="#111"/><Text style={s.backText}>VOLVER AL PERFIL</Text></TouchableOpacity>
@@ -50,7 +62,7 @@ export default function AuthScreen({ onClose }: Props) {
    <Text style={s.label}>CORREO ELECTRÓNICO</Text><TextInput value={email} onChangeText={setEmail} autoCapitalize="none" keyboardType="email-address" autoComplete="email" placeholder="tu correo electrónico" placeholderTextColor="#888" style={s.input}/>
    <Text style={s.label}>CONTRASEÑA</Text><TextInput value={password} onChangeText={setPassword} secureTextEntry autoCapitalize="none" autoComplete={mode==="login"?"current-password":"new-password"} placeholder="Mínimo 6 caracteres" placeholderTextColor="#888" style={s.input}/>
    <TouchableOpacity disabled={busy} onPress={submit} style={s.primary}>{busy?<ActivityIndicator color="#fff"/>:<Text style={s.primaryText}>{mode==="login"?"INICIAR SESIÓN":"CREAR CUENTA"}</Text>}</TouchableOpacity>
-   {!!message&&<Text style={s.message}>{message}</Text>}
+   {!!message&&<Text style={s.message}>{message}</Text>}\n   {mode==="login"&&<TouchableOpacity disabled={busy} onPress={recoverPassword} style={{paddingVertical:16,alignItems:"center"}}><Text style={{fontSize:11,fontWeight:"800",color:"#333",textDecorationLine:"underline"}}>¿OLVIDASTE TU CONTRASEÑA?</Text></TouchableOpacity>}
    {!supabase&&<View style={s.notice}><Ionicons name="cloud-offline-outline" size={19} color="#111"/><Text style={s.noticeText}>La conexión de Supabase todavía no está configurada. Esta pantalla está preparada; activaremos las cuentas cuando conectemos la base de datos.</Text></View>}
   </>}
  </ScrollView>;
