@@ -62,13 +62,27 @@ type Tab = typeof tabs[number]["id"];
 export default function App() {
  const [tab,setTab]=useState<Tab>("home"); const [filter,setFilter]=useState("Todos"); const [query,setQuery]=useState(""); const [selected,setSelected]=useState<Skill|null>(null);
  const [done,setDone]=useState<string[]>(["L-sit"]); const [saved,setSaved]=useState<string[]>([]); const [completedSessions,setCompletedSessions]=useState(0); const [storageReady,setStorageReady]=useState(false); const [athleteName,setAthleteName]=useState("Atleta"); const [athleteGoal,setAthleteGoal]=useState("Dominar habilidades"); const [experience,setExperience]=useState("Principiante"); const [workoutDates,setWorkoutDates]=useState<string[]>([]);
- const workout = [
-  {name:"Flexiones",kind:"reps" as const,sets:3,reps:8,work:0,rest:60},
-  {name:"Dominadas asistidas",kind:"reps" as const,sets:3,reps:6,work:0,rest:75},
-  {name:"Fondos asistidos",kind:"reps" as const,sets:3,reps:8,work:0,rest:60},
-  {name:"Sentadillas",kind:"reps" as const,sets:3,reps:12,work:0,rest:60},
-  {name:"Hollow body hold",kind:"time" as const,sets:3,reps:0,work:20,rest:45},
+ const workout = experience==="Principiante" ? [
+  {name:"Flexiones inclinadas",kind:"reps" as const,sets:2,reps:8,work:0,rest:75},
+  {name:"Remo con apoyo",kind:"reps" as const,sets:2,reps:8,work:0,rest:75},
+  {name:"Sentadillas",kind:"reps" as const,sets:2,reps:10,work:0,rest:60},
+  {name:"Puente de glúteos",kind:"reps" as const,sets:2,reps:10,work:0,rest:60},
+  {name:"Plancha",kind:"time" as const,sets:2,reps:0,work:15,rest:45},
   {name:"Movilidad de hombros",kind:"time" as const,sets:2,reps:0,work:30,rest:30},
+ ] : experience==="Intermedio" ? [
+  {name:"Flexiones",kind:"reps" as const,sets:3,reps:10,work:0,rest:60},
+  {name:"Dominadas asistidas",kind:"reps" as const,sets:3,reps:8,work:0,rest:75},
+  {name:"Fondos asistidos",kind:"reps" as const,sets:3,reps:10,work:0,rest:60},
+  {name:"Sentadillas",kind:"reps" as const,sets:3,reps:15,work:0,rest:60},
+  {name:"Hollow body hold",kind:"time" as const,sets:3,reps:0,work:25,rest:45},
+  {name:"Movilidad de hombros",kind:"time" as const,sets:2,reps:0,work:35,rest:30},
+ ] : [
+  {name:"Flexiones declinadas",kind:"reps" as const,sets:4,reps:10,work:0,rest:90},
+  {name:"Dominadas",kind:"reps" as const,sets:4,reps:6,work:0,rest:120},
+  {name:"Fondos",kind:"reps" as const,sets:4,reps:8,work:0,rest:90},
+  {name:"Pistol squat asistida",kind:"reps" as const,sets:3,reps:6,work:0,rest:90},
+  {name:"Hollow body hold",kind:"time" as const,sets:3,reps:0,work:35,rest:60},
+  {name:"Movilidad de hombros",kind:"time" as const,sets:2,reps:0,work:40,rest:30},
  ];
  const [exerciseIndex,setExerciseIndex]=useState(0);
  const [series,setSeries]=useState(1);
@@ -101,7 +115,7 @@ export default function App() {
  {tab==="home"&&<><View style={styles.top}><View><Text style={styles.brand}>CALISTHENICS <Text style={{color:C.muted}}>PRO</Text></Text><Text style={styles.eyebrow}>TU ENTRENAMIENTO EMPIEZA AQUÍ</Text></View><View style={styles.avatar}><Ionicons name="person" color={C.white} size={20}/></View></View><View style={styles.hero}><Text style={styles.heroKicker}>DISCIPLINA · FUERZA · CONTROL</Text><Text style={styles.heroTitle}>BUILD YOUR{"\n"}STRENGTH.</Text><Text style={styles.description}>Domina tu cuerpo. Supera tus límites.</Text><TouchableOpacity style={styles.primary} onPress={()=>setTab("train")}><Text style={styles.primaryText}>EMPEZAR A ENTRENAR</Text><Ionicons name="arrow-forward" size={18} color={C.bg}/></TouchableOpacity></View><View style={styles.stats}><View style={styles.stat}><Text style={styles.statNum}>{done.length}</Text><Text style={styles.statLabel}>Progresiones</Text></View><View style={styles.stat}><Text style={styles.statNum}>{saved.length}</Text><Text style={styles.statLabel}>Favoritos</Text></View><View style={styles.stat}><Text style={styles.statNum}>01</Text><Text style={styles.statLabel}>Nivel inicial</Text></View></View><Header eyebrow="Explora" title="Domina nuevos trucos"/><View style={styles.tiles}><TouchableOpacity style={styles.tile} onPress={()=>{setFilter("Estático");setTab("library")}}><Ionicons name="body-outline" size={24} color={C.white}/><Text style={styles.tileTitle}>Estáticos</Text><Text style={styles.cardSub}>Fuerza y control</Text></TouchableOpacity><TouchableOpacity style={styles.tile} onPress={()=>{setFilter("Dinámico");setTab("library")}}><Ionicons name="flash-outline" size={24} color={C.white}/><Text style={styles.tileTitle}>Dinámicos</Text><Text style={styles.cardSub}>Potencia y técnica</Text></TouchableOpacity></View><Header eyebrow="Para empezar" title="Trucos destacados"/>{skills.slice(0,4).map(s=><SkillCard key={s.name} item={s}/>)}<Header eyebrow="Hábitos saludables" title="Nutrición para entrenar"/><View style={styles.panel}><Text style={styles.cardTitle}>Come para recuperarte</Text><Text style={styles.cardSub}>Incluye fuentes variadas de proteína, carbohidratos, frutas, verduras y grasas saludables. Bebe agua durante el día y ajusta las cantidades a tu hambre, actividad y necesidades.</Text><View style={styles.workoutRow}><Ionicons name="water-outline" size={19} color={C.white}/><Text style={[styles.cardSub,{flex:1,color:C.soft}]}>Hidratación: bebe regularmente, especialmente con calor o sudor.</Text></View><View style={styles.workoutRow}><Ionicons name="restaurant-outline" size={19} color={C.white}/><Text style={[styles.cardSub,{flex:1,color:C.soft}]}>Comidas: prioriza alimentos variados y suficientes para tu entrenamiento.</Text></View><View style={styles.workoutRow}><Ionicons name="moon-outline" size={19} color={C.white}/><Text style={[styles.cardSub,{flex:1,color:C.soft}]}>Recuperación: dormir bien también forma parte del progreso.</Text></View><Text style={styles.noteText}>Esta es información general, no un plan médico ni una dieta personalizada.</Text></View></>}
  {tab==="library"&&<><Header eyebrow="Biblioteca · 56 habilidades" title="Encuentra tu próximo truco"/><TextInput value={query} onChangeText={setQuery} placeholder="Buscar trucos o grupos..." placeholderTextColor={C.muted} style={styles.search}/><ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{gap:8,marginBottom:18}}>{["Todos","Favoritos","Estático","Dinámico","Principiante","Intermedio","Avanzado","Élite"].map(x=><Chip key={x} label={x} active={filter===x} onPress={()=>setFilter(x)}/>)}</ScrollView><Text style={styles.result}>{filtered.length} RESULTADOS</Text>{filtered.map(s=><SkillCard key={s.name} item={s}/>)}</>}
  {tab==="train"&&<><Header eyebrow="Entrenamiento guiado" title="Entrena con intención"/>
- <View style={styles.hero}><Text style={styles.heroKicker}>PROGRAMA DE INICIACIÓN</Text><Text style={styles.heroTitle}>BASE DE{"\\n"}CALISTENIA</Text><Text style={styles.description}>Completa cada ejercicio a tu ritmo. El temporizador te guía durante el trabajo y el descanso.</Text><View style={styles.programMeta}><Text style={styles.metaText}>3 DÍAS / SEMANA</Text><Text style={styles.metaText}>·</Text><Text style={styles.metaText}>6 EJERCICIOS</Text></View></View>
+ <View style={styles.hero}><Text style={styles.heroKicker}>PROGRAMA DE INICIACIÓN</Text><Text style={styles.heroTitle}>BASE DE{"\\n"}CALISTENIA</Text><Text style={styles.description}>Plan {experience.toLowerCase()}. Completa cada ejercicio a tu ritmo. El temporizador te guía durante el trabajo y el descanso. Ajusta el nivel desde tu perfil.</Text><View style={styles.programMeta}><Text style={styles.metaText}>3 DÍAS / SEMANA</Text><Text style={styles.metaText}>·</Text><Text style={styles.metaText}>6 EJERCICIOS</Text></View></View>
  {phase==="Completado"?<View style={styles.panel}><Text style={styles.sectionTitle}>¡Entrenamiento terminado!</Text><Text style={styles.description}>Buen trabajo. Recupera y vuelve cuando estés listo.</Text><TouchableOpacity style={styles.primary} onPress={()=>{setExerciseIndex(0);setSeries(1);setPhase("Listo");setSecondsLeft(workout[0].work);setTimerRunning(false)}}><Text style={styles.primaryText}>REPETIR ENTRENAMIENTO</Text></TouchableOpacity></View>:<><View style={styles.panel}>
  <Text style={styles.eyebrow}>EJERCICIO {exerciseIndex+1} DE {workout.length}</Text><Text style={styles.heroTitle}>{workout[exerciseIndex].name}</Text>
  <Text style={styles.cardSub}>{workout[exerciseIndex].kind==="time"?`${workout[exerciseIndex].work} segundos de aguante`:`${workout[exerciseIndex].reps} repeticiones`} · {workout[exerciseIndex].sets} series</Text>
