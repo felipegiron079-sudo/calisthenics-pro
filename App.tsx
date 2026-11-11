@@ -35,7 +35,6 @@ const skills: Skill[] = [
   {name:"Reverse muscle-up",type:"Dinámico",level:"Avanzado",group:"Barra",description:"Transición inversa desde apoyo superior hacia suspensión.",steps:["Straight bar dip","Negative transition","Assisted reverse transition","Reverse muscle-up"]},
   {name:"Shrimp squat",type:"Dinámico",level:"Intermedio",group:"Piernas",description:"Sentadilla unilateral llevando el pie libre detrás del cuerpo.",steps:["Split squat","Assisted shrimp","Negative shrimp","Shrimp squat"]},
   {name:"Burpee",type:"Dinámico",level:"Principiante",group:"Condición",description:"Movimiento global que combina apoyo, extensión y salto.",steps:["Squat to plank","Step-back burpee","Burpee sin salto","Burpee completo"]},
-,
   {name:"Victorian",type:"Estático",level:"Élite",group:"Empuje",description:"Palanca horizontal con brazos extendidos por debajo del cuerpo; requiere fuerza extrema.",steps:["Planche sólida","Maltese lean","Victorian tuck asistido","Progresión con bandas","Victorian supervisado"]},
   {name:"Straddle planche",type:"Estático",level:"Avanzado",group:"Empuje",description:"Planche con piernas separadas para reducir la palanca respecto a la posición completa.",steps:["Tuck planche","Advanced tuck","Straddle negatives","Straddle planche hold"]},
   {name:"Tuck planche",type:"Estático",level:"Intermedio",group:"Empuje",description:"Mantén las rodillas recogidas y el cuerpo elevado apoyado en las manos.",steps:["Planche lean","Frog stand","Tuck planche asistida","Tuck planche hold"]},
