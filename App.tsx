@@ -150,7 +150,7 @@ export default function App() {
    setSecondsLeft(current=>{
     if(current<=1){
      if(phase==="Trabajo"){setPhase("Descanso");return workout[exerciseIndex].rest;}
-     setTimerRunning(false);setPhase("Listo");return 0;
+     setTimerRunning(false);return 0;
     }
     return current-1;
    });
