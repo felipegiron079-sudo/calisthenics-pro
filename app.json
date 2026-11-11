@@ -1,0 +1,22 @@
+{
+  "expo": {
+    "name": "CALISTHENICS PRO",
+    "slug": "calisthenics-pro",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "backgroundColor": "#080808"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.yourbrand.calisthenicspro"
+    },
+    "android": {
+      "package": "com.yourbrand.calisthenicspro",
+      "adaptiveIcon": {
+        "backgroundColor": "#080808"
+      }
+    }
+  }
+}
