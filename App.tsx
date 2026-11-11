@@ -73,6 +73,22 @@ const skills: Skill[] = [
 const C = {bg:"#080808",panel:"#151515",panel2:"#202020",line:"#292929",white:"#F5F5F5",muted:"#969696",soft:"#C8C8C8"};
 const tabs = [{id:"home",label:"Inicio",icon:"home-outline"},{id:"library",label:"Trucos",icon:"barbell-outline"},{id:"train",label:"Entrenar",icon:"flash-outline"},{id:"progress",label:"Progreso",icon:"stats-chart-outline"},{id:"profile",label:"Perfil",icon:"person-outline"}] as const;
 type Tab = typeof tabs[number]["id"];
+const exerciseTips: Record<string, string> = {
+ "Flexiones inclinadas":"Apoya las manos en una superficie firme. Mantén el cuerpo recto, baja el pecho con control y empuja sin encoger los hombros.",
+ "Remo con apoyo":"Usa un apoyo estable. Lleva los codos hacia atrás, acerca el pecho al apoyo y evita balancear el tronco.",
+ "Sentadillas":"Separa los pies al ancho cómodo de tus hombros. Lleva la cadera atrás, mantén los pies apoyados y sube con control.",
+ "Puente de glúteos":"Tumbado boca arriba y con rodillas flexionadas, eleva la cadera apretando glúteos. No arquees exageradamente la espalda.",
+ "Plancha":"Apoya antebrazos y puntas de los pies. Mantén cabeza, cadera y talones alineados; respira sin hundir la zona lumbar.",
+ "Movilidad de hombros":"Haz círculos lentos y cómodos con los brazos. No fuerces el rango ni continúes si aparece dolor.",
+ "Flexiones":"Coloca manos bajo los hombros, cuerpo alineado y abdomen firme. Baja controladamente y empuja el suelo.",
+ "Dominadas asistidas":"Usa una banda o apoyo seguro para reducir carga. Inicia desde hombros activos y evita balancearte.",
+ "Fondos asistidos":"Usa asistencia estable, mantén hombros controlados y baja solo hasta un rango cómodo sin dolor.",
+ "Hollow body hold":"Presiona suavemente la zona lumbar contra el suelo. Eleva brazos y piernas solo hasta donde puedas mantener esa posición.",
+ "Flexiones declinadas":"Apoya los pies en una superficie baja y firme. Mantén el tronco alineado y baja sin dejar caer la cabeza.",
+ "Dominadas":"Agarra una barra bien fijada. Inicia con control escapular, sube sin impulso y desciende lentamente.",
+ "Fondos":"Usa paralelas firmes. Mantén hombros estables y rango cómodo; no bajes más allá de lo que controlas.",
+ "Pistol squat asistida":"Sujétate a un apoyo estable, flexiona una pierna y baja hasta donde mantengas equilibrio y control.",
+};
 export default function App() {
  const [tab,setTab]=useState<Tab>("home"); const [filter,setFilter]=useState("Todos"); const [query,setQuery]=useState(""); const [selected,setSelected]=useState<Skill|null>(null);
  const [done,setDone]=useState<string[]>(["L-sit"]); const [saved,setSaved]=useState<string[]>([]); const [completedSessions,setCompletedSessions]=useState(0); const [storageReady,setStorageReady]=useState(false); const [athleteName,setAthleteName]=useState("Atleta"); const [athleteGoal,setAthleteGoal]=useState("Dominar habilidades"); const [experience,setExperience]=useState("Principiante"); const [workoutDates,setWorkoutDates]=useState<string[]>([]); const [pushupRecord,setPushupRecord]=useState(0); const [recordInput,setRecordInput]=useState("");
@@ -140,6 +156,7 @@ export default function App() {
  {phase==="Completado"?<View style={styles.panel}><Text style={styles.sectionTitle}>¡Entrenamiento terminado!</Text><Text style={styles.description}>Buen trabajo. Recupera y vuelve cuando estés listo.</Text><TouchableOpacity style={styles.primary} onPress={()=>{setExerciseIndex(0);setSeries(1);setPhase("Listo");setSecondsLeft(workout[0].work);setTimerRunning(false)}}><Text style={styles.primaryText}>REPETIR ENTRENAMIENTO</Text></TouchableOpacity></View>:<><View style={styles.panel}>
  <Text style={styles.eyebrow}>EJERCICIO {exerciseIndex+1} DE {workout.length}</Text><Text style={styles.heroTitle}>{workout[exerciseIndex].name}</Text>
  <Text style={styles.cardSub}>{workout[exerciseIndex].kind==="time"?`${workout[exerciseIndex].work} segundos de aguante`:`${workout[exerciseIndex].reps} repeticiones`} · {workout[exerciseIndex].sets} series</Text>
+ <View style={{backgroundColor:C.panel2,borderRadius:12,padding:14,marginTop:14}}><Text style={styles.cardTitle}>Cómo hacerlo correctamente</Text><Text style={[styles.cardSub,{color:C.soft,lineHeight:19,marginTop:7}]}>{exerciseTips[workout[exerciseIndex].name]||"Realiza el movimiento lentamente, con control y dentro de un rango cómodo."}</Text><Text style={[styles.noteText,{marginTop:9}]}>Prioriza la técnica. Detente si sientes dolor y utiliza una variante más fácil si no puedes mantener el control.</Text></View>
  <View style={styles.timerCircle}><Text style={styles.timerPhase}>{phase==="Listo"?"PREPARADO":phase.toUpperCase()}</Text><Text style={styles.timerNumber}>{phase==="Trabajo"||phase==="Descanso"?String(secondsLeft).padStart(2,"0")+"s":workout[exerciseIndex].kind==="time"?workout[exerciseIndex].work+"s":workout[exerciseIndex].reps}</Text><Text style={styles.timerHint}>{phase==="Descanso"?"Tiempo de recuperación":workout[exerciseIndex].kind==="time"?"Aguanta con buena técnica":"Repeticiones objetivo"}</Text></View>
  <View style={styles.seriesRow}><Text style={styles.cardTitle}>Serie {series} / {workout[exerciseIndex].sets}</Text><Text style={styles.cardSub}>Descanso: {workout[exerciseIndex].rest} s</Text></View>
  <View style={styles.progressTrack}><View style={[styles.progressFill,{width:`${(series/workout[exerciseIndex].sets)*100}%`}]}/></View>
